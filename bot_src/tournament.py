@@ -13,25 +13,37 @@ class Tournament:
         with open(json_file) as json_data:
             names = json.load(json_data)
 
-    def Pick_Nick(self):
+    def pick_nick(self):
         return_value = 'DEFAULT_NAME'
         return return_value
 
 
-    async def Participant_Register(self, user):
+    async def participant_register(self, user):
         # Check if user has already registered
         if next(filter(lambda arr : arr.id == user.name, self.participants), None) == None: 
             new_participant = Participant()
-            new_participant.nick = self.Pick_Nick()
+            new_participant.nick = self.pick_nick()
             new_participant.id = user.name
+
             if user.dm_channel is None:
                await user.create_dm()
             new_participant.dm_channel = user.dm_channel
-            await user.dm_channel.send("ASDDAS")
+
             self.participants.append(new_participant)
             seed_required = True
 
+            self.export_data_to_json()
             return True
         else:
             return False
         
+    def export_data_to_json(self):
+        json_export_array = []
+        for participant in self.participants:
+            participant_dict = {}
+            participant_dict["id"] = participant.id
+            participant_dict["name"] = participant.name
+            participant_dict["seed"] = participant.seed
+            participant_dict["opponent_name"] = participant.opponent_name
+            json_export_array.append(participant_dict)
+        print(json.dumps(json_export_array))

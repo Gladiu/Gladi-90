@@ -8,7 +8,7 @@ tournament_instance = tournament.Tournament()
 
 @bot.application_command(name="register", description="Register for the Tournament.") # this decorator makes a slash command
 async def register(ctx):
-    if await tournament_instance.Participant_Register(ctx.author):
+    if await tournament_instance.participant_register(ctx.author):
         await ctx.author.send("You have succesfully registered to a tournament! ")
     else:
         await ctx.author.send("You have already registered!")
