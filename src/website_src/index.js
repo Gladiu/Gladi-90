@@ -71,6 +71,6 @@ function exportData()
 }
 
 var imported_tournament_info = null
-fetch('shared_data/tournament_info.json')
+fetch("http://localhost/shared_data/tournament_info.json")
 .then((response) => response.json())
 .then((json) => parseData(json));

@@ -1,4 +1,5 @@
 import json
+from random import randrange
 from participant import Participant
 
 class Tournament:
@@ -8,24 +9,28 @@ class Tournament:
     
     def __init__(self):
 
-        json_file = "assets/names.json"
-
+        json_file = "src/assets/names.json"
         with open(json_file) as json_data:
-            names = json.load(json_data)
-        
+            self.names = json.load(json_data)
         
 
-    def pick_nick(self):
-        return_value = 'DEFAULT_NAME'
-        return return_value
+    def pick_nick(self, id):
+        # Randomly pick names untill its not taken
+        # TODO: detect if all names are taken
+        return_nick = self.names[randrange(len(self.names))]
+        while next(filter(lambda arr : arr.nick == return_nick, self.participants), None) != None: 
+            return_nick = self.names[randrange(len(self.names))]
+            print(return_nick )
+        return return_nick
 
 
     async def participant_register(self, user):
         # Check if user has already registered
         if next(filter(lambda arr : arr.id == user.name, self.participants), None) == None: 
             new_participant = Participant()
-            new_participant.nick = self.pick_nick()
             new_participant.id = user.name
+            new_participant.nick = self.pick_nick(new_participant.id)
+
 
             if user.dm_channel is None:
                await user.create_dm()
@@ -40,7 +45,7 @@ class Tournament:
             return False
         
     def export_data_to_json(self):
-        export_file = open("shared_data/tournament_info.json", "w")
+        export_file = open("src/shared_data/tournament_info.json", "w")
         json_export_array = []
         for participant in self.participants:
             participant_dict = {}
