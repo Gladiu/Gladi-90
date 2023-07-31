@@ -3,4 +3,4 @@ class Participant:
     id = ''
     dm_channel = None
     seed = 0
-    opponent_name = ''
+    opponent_id = ''

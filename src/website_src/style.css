@@ -1,0 +1,12 @@
+table input[type="text"] {
+/* place any styling here */
+border: 1px
+}
+
+table input[type="text"]:read-only {
+border: none;
+}
+
+#save {
+display: none;
+}

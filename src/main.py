@@ -1,3 +1,4 @@
+from bot_src import discord_token,tournament
 import discord_token # used for bot token
 import discord
 import tournament
