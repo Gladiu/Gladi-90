@@ -55,3 +55,11 @@ class Tournament:
             participant_dict["opponent_id"] = participant.opponent_id
             json_export_array.append(participant_dict)
         export_file.write(json.dumps(json_export_array))
+
+    def update_seeds(self):
+        json_file = "src/shared_data/seeded_players.json"
+        with open(json_file) as json_data:
+            seeded_players = json.load(json_data)
+            for participant in self.participants:
+                participant.seed = seeded_players[participant.id]
+            self.export_data_to_json()

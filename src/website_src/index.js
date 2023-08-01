@@ -60,11 +60,15 @@ function parseData(json_data)
 
 function exportData()
 {
-
+    var seededPlayers = {};
+    for (var i = 0, len = participantData.length; i < len; ++i)
+    {
+        seededPlayers[participantData[i].id] = participantData[i].seed;
+    }
     $.ajax({
         type: "POST",
         url: "http://localhost/website_src/save_data.php",
-        data: JSON.stringify(participantData),
+        data: JSON.stringify(seededPlayers),
     }).done(function() {
         alert("Data has been submited to the bot");
     });
