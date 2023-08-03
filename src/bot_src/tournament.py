@@ -1,11 +1,12 @@
 import json
 from random import randrange
 from participant import Participant
+from match import Match
 
 class Tournament:
     names = []
     participants = []
-    seed_required = False
+    matches = []
     
     def __init__(self):
 
@@ -51,15 +52,60 @@ class Tournament:
             participant_dict = {}
             participant_dict["id"] = participant.id
             participant_dict["nick"] = participant.nick
-            participant_dict["seed"] = participant.seed
             participant_dict["opponent_id"] = participant.opponent_id
             json_export_array.append(participant_dict)
         export_file.write(json.dumps(json_export_array))
 
-    def update_seeds(self):
+    def update_seeds_from_json(self):
         json_file = "src/shared_data/seeded_players.json"
         with open(json_file) as json_data:
             seeded_players = json.load(json_data)
             for participant in self.participants:
                 participant.seed = seeded_players[participant.id]
             self.export_data_to_json()
+
+    def generate_matches(self):
+
+        self.participants.sort(key=lambda x: (x.seed))
+
+        # Stage 0 matches
+        # Stage with most matches
+
+        stage_0_players = 2
+        while (stage_0_players < len(self.participants)):
+
+            if stage_0_players ** 2 > len(self.participants):
+                break
+            else:
+                stage_0_players = stage_0_players ** 2
+
+        new_match = Match()
+        self.matches.append(new_match)
+        for i in range(0, int(stage_0_players/2)):
+                
+                # It becomes important in stage -1 setup that
+                # higher seeded player goes first
+
+                self.matches[len(self.matches) - 1].players.append(self.participants[i])
+                self.matches[len(self.matches) - 1].players.append(self.participants[-i])
+
+                new_match = Match()
+                self.matches.append(new_match)
+
+        # Stage -1 matches
+        # Stage with leftovers players
+        # Number of players is equal to number of games added
+        stage_minus_1_players = len(self.participants) - stage_0_players
+        new_match = Match()
+        self.matches.append(new_match)
+        for i in range(stage_0_players/2, stage_0_players/2 + stage_minus_1_players):
+
+            self.matches[len(self.matches) - 1].players.append(self.participants[i])
+            self.matches[len(self.matches) - 1].players.append(self.matches[i].players[1])
+            self.matches[i].players[1] = 'Winner of Match %d' % len(self.matches) - 1 - 1
+
+            new_match = Match()
+            self.matches.append(new_match)
+
+        # Stage 0< matches
+        # Further matches up to grand finals

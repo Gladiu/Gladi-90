@@ -20,11 +20,15 @@ async def register(ctx):
         await ctx.author.send("You have already registered!")
     await ctx.delete()
         
-    
 @bot.event
 async def on_message(message):
     if message.channel.type is discord.ChannelType.private and message.author != bot.user:
-        print(message.content)
+        if message.content.find("!generate") != -1:
+            print(message.content)
+            tournament_instance.generate_matches()
+            print(tournament_instance.matches)
+
+
 
 class Handler(watchdog.events.PatternMatchingEventHandler):
     def __init__(self):
@@ -33,12 +37,9 @@ class Handler(watchdog.events.PatternMatchingEventHandler):
                                                              ignore_directories=True, case_sensitive=False)
  
     def on_modified(self, event):
-        print("Watchdog received modified event - % s." % event.src_path)
+        #print("Watchdog received modified event - % s." % event.src_path)
         if event.src_path.find("seeded_players") != -1:
-            tournament_instance.update_seeds()
-            
-
-
+            tournament_instance.update_seeds_from_json()
 
 if __name__ == "__main__":
     src_path = r"src/shared_data"
