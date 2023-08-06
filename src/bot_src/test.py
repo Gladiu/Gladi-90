@@ -17,10 +17,11 @@ def test_generate_matches():
     tournament_instance.generate_matches()
 
 if __name__ == "__main__":
-    generate_participants(4)
+    generate_participants(15)
     test_generate_matches()
     for i in range(0, len(tournament_instance.matches)):
-        print("Match %d" % i)
+        print("Match %d | Stage %d" % (i, tournament_instance.matches[i].stage))
         for j in range(0, len(tournament_instance.matches[i].players)):
-            print("Player %d name: %s" % (j, tournament_instance.matches[i].players[j].id))
+            player = tournament_instance.matches[i].players[j]
+            print("Name: %s | seed: %d" % (player.nick, player.seed))
         print("-----------")

@@ -71,46 +71,65 @@ class Tournament:
         # Stage with most matches
 
         stage_0_players = 2
-        while (stage_0_players < len(self.participants)):
+        while stage_0_players * 2 <= len(self.participants):         
+            stage_0_players = stage_0_players * 2
 
-            if stage_0_players ** 2 > len(self.participants):
-                break
-            else:
-                stage_0_players = stage_0_players ** 2
 
         for i in range(0, int(stage_0_players/2)):
 
                 new_match = Match()
                 
-                # It becomes important in stage -1 setup that
-                # higher seeded player goes first
+                # Higher seeded player always goes first
                 new_match.players.append(self.participants[i])
                 new_match.players.append(self.participants[stage_0_players - 1 - i])
+
                 self.matches.append(new_match)
 
 
-        stage_minus_1_players = len(self.participants) - stage_0_players
-        stage_minus_2_players = 0
-        if stage_minus_1_players > stage_0_players * 0.5:
-            stage_minus_2_players = stage_minus_1_players - stage_0_players * 0.5
-            stage_minus_1_players = stage_minus_2_players - stage_0_players * 0.5
+        surplus_stage_0_players = len(self.participants) - stage_0_players
 
-        if stage_minus_1_players <= 0:
-            return
 
-        # Stage -1
-        new_match = Match()
-        self.matches.append(new_match)
-        for i in range(0, stage_minus_1_players):
+        if surplus_stage_0_players > 0:
 
-            self.matches[i].players.append(self.participants[i+stage_0_players])
-            self.matches[i].players.append(self.matches[i].players[1])
-            self.matches[i].players[1] = 'Winner of Match %d' % len(self.matches) + 1
+            stage_minus_1_players = 0
+            stage_minus_2_players = 0
+            
+            if surplus_stage_0_players > stage_0_players * 0.5:
+                # stage_0_players is always power of 2
+                stage_minus_1_players = int(stage_0_players * 0.75) - 1
+                stage_minus_2_players = surplus_stage_0_players - stage_minus_1_players
+            else:
+                stage_minus_1_players = surplus_stage_0_players
 
-            new_match = Match()
-            self.matches.append(new_match)
 
-        # Stage -2
+            # Stage -1
+
+            for i in range(0, stage_minus_1_players):
+                new_match = Match()
+                new_match.stage = -1
+
+                # Higher seeded player always goes first
+                new_match.players.append(self.matches[i].players[1])
+                new_match.players.append(self.participants[i+stage_0_players])
+
+                self.matches[i].players[1] = Participant()
+                self.matches[i].players[1].nick = 'Winner of Match %d' % int(len(self.matches))
+
+                self.matches.append(new_match)
+
+            # Stage -2
+            for i in range(0, stage_minus_2_players):
+                new_match = Match()
+                new_match.stage = -2
+
+                # Each player in stage -1 got its match
+                new_match.players.append(self.matches[i+int(stage_0_players/2)].players[1])
+                new_match.players.append(self.participants[i+stage_0_players+stage_minus_1_players])
+
+                self.matches[i+int(stage_0_players/2)].players[1] = Participant()
+                self.matches[i+int(stage_0_players/2)].players[1].nick = 'Winner of Match %d' % int(len(self.matches))
+
+                self.matches.append(new_match)
 
 
         # Stage 0< matches
