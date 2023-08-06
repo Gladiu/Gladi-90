@@ -11,6 +11,7 @@ import tournament
 bot = discord.Bot()
 
 tournament_instance = tournament.Tournament()
+tournament_instance.import_names()
 
 @bot.application_command(name="register", description="Register for the Tournament.") # this decorator makes a slash command
 async def register(ctx):

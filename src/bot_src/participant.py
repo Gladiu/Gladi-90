@@ -1,5 +1,5 @@
 class Participant:
-    name = ''
+    nick = ''
     id = ''
     dm_channel = None
     seed = 0
